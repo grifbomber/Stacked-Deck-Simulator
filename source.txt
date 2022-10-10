@@ -1,0 +1,313 @@
+import tkinter
+from tkinter import *
+from tkinter.scrolledtext import ScrolledText
+from PIL import ImageTk, Image #called to be able to use .png, .jpeg, etc.
+import random, os
+import functools
+
+uniform = functools.partial(random.uniform, 0, 1)
+root = Tk() #has to happen before anything else
+root.title("3.18 Stacked Deck Simulator") #change text in header
+root.iconbitmap('Stacked_Deck_icon.ico') #change icon in header
+width = root.winfo_screenwidth()
+height = root.winfo_screenheight()
+root.geometry("%dx%d" % (width, height))
+root.state('zoomed')
+
+cards = ["Rain of Chaos", "The Lover", "Emperor's Luck", "Destined to Crumble", "The Scholar", "The King's Blade",
+         "The Metalsmith's Gift", "Loyalty", "The Flora's Gift", "The Catalyst", "A Mother's Parting Gift",
+         "The Incantation", "The Carrion Crow", "Three Faces in the Dark", "The Lunaris Priestess",
+         "Turn the Other Cheek", "The Gemcutter", "Dark Temptation", "The Doppelganger", "Doedre's Madness",
+         "Lantador's Lost Love", "Thunderous Skies", "Rain Tempter", "Prosperity", "The Opulent", "Humility",
+         "Three Voices", "Imperial Legacy", "The Arena Champion", "The Journalist", "Vinia's Token",
+         "The Chains that Bind", "The Warden", "Her Mask", "The Hermit", "The Tireless Extractor", "The Void",
+         "Lost Worlds", "The Master Artisan", "The Wrath", "Gemcutter's Promise", "The Explorer", "Boon of Justice",
+         "The Sigil", "The Web", "A Sea of Blue", "Struck by Lightning", "The Watcher", "Akil's Prophecy",
+         "Lucky Connections", "The Battle Born", "The Survivalist", "The Cartographer", "The Inoculated",
+         "Cursed Words", "Volatile Power", "The Summoner", "The Trial", "The Inventor", "Last Hope",
+         "The Wolf's Shadow", "Scholar of the Seas", "The Dragon", "The Skeleton", "The Endurance", "Shard of Fate",
+         "The Lich", "The Union", "The Rabid Rhoa", "The Eye of the Dragon", "The Mountain", "The Sword King's Salute",
+         "The Twins", "The Puzzle", "Boundless Realms", "The Surgeon", "The Gambler", "The Witch", "The Surveyor",
+         "Sambodhi's Vow", "The Army of Blood", "Cartographer's Delight", "Mitts", "Death", "The Garish Power",
+         "Arrogance of the Vaal", "Jack in the Box", "The Lion", "The Gentleman", "The Blazing Fire",
+         "The Scarred Meadow", "The Porcupine", "Might is Right", "The Beast", "Chaotic Disposition",
+         "Assassin's Favour", "The Fool", "The Jeweller's Boon", "The Twilight Moon", "Rats", "Society's Remorse",
+         "The Dreamland", "Acclimatisation", "Hunter's Resolve", "The Cache", "The Last Supper", "The Forsaken",
+         "The Formless Sea", "Grave Knowledge", "The Adventuring Spirit", "The Wolf", "Light and Truth",
+         "Coveted Possession", "The Wretched", "Left to Fate", "Time-Lost Relic", "The Tower", "Thirst for Knowledge",
+         "The Wilted Rose", "The Professor", "The Dapper Prodigy", "The Body", "The Hoarder", "No Traces",
+         "The Visionary", "The Valkyrie", "The Calling", "The Blessing of Moosh", "The Cataclysm", "The Fox",
+         "The Gladiator", "The Deceiver", "Sambodhi's Wisdom", "Lingering Remnants", "The Rite of Elements",
+         "Gift of the Gemling Queen", "The Coming Storm", "The Heroic Shot", "The Oath", "The Fox in the Brambles",
+         "Emperor of Purity", "Atziri's Arsenal", "The Drunken Aristocrat", "Dying Anguish", "The Penitent",
+         "The Primordial", "The Encroaching Darkness", "The Price of Protection", "Vanity", "Call to the First Ones",
+         "The Aesthete", "The Scavenger", "The Wolverine", "The Easy Stroll", "The Admirer", "Dialla's Subjugation",
+         "The Wolf's Legacy", "The Patient", "Anarchy's Price", "Echoes of Love", "The Card Sharp",
+         "Guardian's Challenge", "The Long Watch", "The Golden Era", "The Pack Leader", "The King's Heart",
+         "The Forward Gaze", "The Fathomless Depths", "The Messenger", "Vile Power", "The Archmage's Right Hand",
+         "The Sun", "Lysah's Respite", "The Saint's Treasure", "The Ruthless Ceinture", "Underground Forest",
+         "The Mad King", "The Innocent", "Triskaidekaphobia", "The Standoff", "The Last One Standing", "The Feast",
+         "The Traitor", "The Conduit", "The Lord in Black", "Earth Drinker", "The Stormcaller", "A Dab of Ink",
+         "Buried Treasure", "The Unexpected Prize", "The Dark Mage", "The Deal", "The Breach", "The Landing",
+         "The Whiteout", "Prejudice", "The Demoness", "More is Never Enough", "Glimmer of Hope", "The Spoiled Prince",
+         "Tranquillity", "The Transformation", "The Fletcher", "Divine Justice", "Baited Expectations",
+         "The One With All", "The Cursed King", "The Lord of Celebration", "The Journey", "The Celestial Justicar",
+         "The Bear Woman", "Treasure Hunter", "Cameria's Cut", "Boon of the First Ones", "The Offering", "Hubris",
+         "Alone in the Darkness", "Brush, Paint and Palette", "Immortal Resolve", "The Mercenary", "The Warlord",
+         "Haunting Shadows", "Unchained", "The Darkest Dream", "Demigod's Wager", "The Side Quest", "The Magma Crab",
+         "The Ethereal", "Lachrymal Necrosis", "The Escape", "Parasitic Passengers", "The Avenger", "The Siren",
+         "The Forgotten Treasure", "Chasing Risk", "Monochrome", "The Poet", "The Eldritch Decay", "The Master",
+         "The Polymath", "Heterochromia", "The Tinkerer's Table", "The Jester", "The Obscured", "The Realm",
+         "Blind Venture", "Costly Curio", "The Bones", "The Undaunted", "Forbidden Power", "Justified Ambition",
+         "The Wind", "The Tyrant", "The Hunger", "The Risk", "Disdain", "Abandoned Wealth", "Reckless Ambition",
+         "Mawr Blaidd", "The Soul", "Azyran's Reward", "Audacity", "Silence and Frost", "The Seeker", "The Offspring",
+         "The Dungeon Master", "Desperate Crusade", "The Academic", "A Note in the Wind", "The Dreamer", "The Pact",
+         "The Scout", "The Sephirot", "From Bone to Ashes", "Lucky Deck", "Merciless Armament", "The Mind's Eyes",
+         "Peaceful Moments", "The Road to Power", "The Harvester", "The Nurse", "The Throne", "The Chosen", "Bijoux",
+         "Council of Cats", "A Stone Perfected", "The Wolven King's Bite", "The Price of Prescience", "Rebirth",
+         "The Prince of Darkness", "Harmony of Souls", "The Bargain", "The Betrayal", "The Brawny Battle Mage",
+         "Pride Before the Fall", "The Cacophony", "Hope", "Brotherhood in Exile", "Alluring Bounty",
+         "Terrible Secret of Space", "Deathly Designs", "Rebirth and Renewal", "The Emptiness", "The Deep Ones",
+         "The Queen", "The Endless Darkness", "The Craving", "The Shortcut", "The Bitter Blossom", "Bowyer's Dream",
+         "Ambitious Obsession", "A Modest Request", "Misery in Darkness", "Dark Dreams", "The Enthusiasts", "Home",
+         "The Enlightened", "A Fate Worse Than Death", "The Insatiable", "The Rabbit's Foot", "Luminous Trove",
+         "Seven Years Bad Luck", "Pride of the First Ones", "The Samurai's Eye", "Burning Blood", "The Brittle Emperor",
+         "Dementophobia", "The Hook", "The Strategist", "Brother's Stash", "The Life Thief", "Magnum Opus",
+         "Winter's Embrace", "The Eye of Terror", "Imperfect Memories", "Perfection", "The Hale Heart",
+         "The Thaumaturgist", "The Celestial Stone", "Draped in Dreams", "The Sustenance", "The White Knight",
+         "The Gulf", "The Spark and the Flame", "The Sacrifice", "The Long Con", "Dying Light", "Judging Voices",
+         "The Artist", "Remembrance", "Hunter's Reward", "The Price of Loyalty", "The Dragon's Heart",
+         "The World Eater", "Broken Promises", "The Progeny of Lunaris", "The Doctor", "The Tumbleweed", "Deadly Joy",
+         "Succor of the Sinless", "The Fishmonger", "Desecrated Virtue", "Eternal Bonds", "Altered Perception",
+         "Wealth and Power", "Fateful Meeting", "The Damned", "The Undisputed", "The Vast", "The Immortal",
+         "Beauty Through Death", "Etched in Blood", "Darker Half", "Prometheus' Armoury", "Keeper's Corruption",
+         "The Aspirant", "The Destination", "Void of the Elements", "The Fiend", "Nook's Crown", "The Cheater",
+         "The Catch", "The Eternal War", "A Familiar Call", "The Apothecary", "Further Invention", "The Awakened",
+         "The Hive of Knowledge", "Duality", "Love Through Ice", "Gift of Asenath", "The Greatest Intentions",
+         "Unrequited Love", "The One That Got Away", "The Old Man", "The Demon", "House of Mirrors", "The Astromancer"]
+
+probabilities = [2452.655134, 1634.646446, 1392.878162, 1337.083518, 1304.59687, 1242.007769, 1086.715974, 1072.818528,
+                 950.1304969, 877.8408158, 838.2851642, 837.5942508, 832.5881258, 823.8548466, 808.8517062, 772.769207,
+                 755.9863407, 735.84814, 733.3638463, 700.875113, 682.7013679, 650.5016096, 555.8505207, 551.6860262,
+                 545.5666177, 537.9477764, 537.372754, 536.2793628, 534.7525056, 523.7987884, 506.4388713, 464.6538542,
+                 458.8211529, 458.1361824, 457.0142156, 455.7659682, 453.0137855, 422.3246773, 420.5385684, 410.2677212,
+                 404.4211392, 399.6999437, 398.999374, 394.581609, 392.632638, 387.5018583, 384.5838287, 382.2345923,
+                 380.835245, 380.5619019, 377.5143044, 377.3770452, 369.1645357, 357.6589242, 357.5179054, 351.427487,
+                 340.1702607, 339.73637, 336.146127, 333.3769235, 332.3903571, 330.4494915, 329.348359, 309.7684848,
+                 307.4155584, 306.0452039, 301.0324759, 300.7634481, 300.6096639, 299.6476196, 296.3263118, 294.2312995,
+                 293.4145568, 291.7386203, 290.4882816, 290.2144114, 289.9404119, 285.0650062, 282.8495123,
+                 282.0164637, 280.784471, 278.1124918, 276.3106537, 274.6638493, 270.9099659, 269.2467529, 269.2467529,
+                 265.7821393, 265.2093326, 264.3899626, 261.8829965, 254.8320001, 250.933179, 245.9422221, 245.3892798,
+                 245.2190184, 237.321704, 233.454405, 229.1586209, 225.5330178, 225.5330178, 225.1333136, 224.0211569,
+                 224.0211569, 221.0716924, 219.1394482, 219.0043229, 215.794071, 215.1127946, 214.8399819, 212.468297,
+                 209.715177, 203.8738246, 202.7517085, 201.8142347, 199.5553538, 199.4609568, 197.3785313, 193.6117576,
+                 193.3241798, 191.2569024, 190.6779933, 190.2915653, 188.5963034, 187.2345898, 183.6116573, 181.9350491,
+                 180.5484916, 179.3059798, 178.3587848, 175.5522797, 172.3678916, 167.921354, 165.7018041, 163.2064705,
+                 162.7887285, 162.1087519, 161.8468425, 157.2550522, 151.5680836, 150.700428, 143.6664735, 142.2725869,
+                 140.8718383, 140.7032809, 140.1970016, 137.1398575, 136.855069, 135.9989187, 133.8178263, 133.6448791,
+                 132.9519679, 130.0451323, 129.6355869, 128.4030468, 128.226487, 127.8140407, 127.6960766, 125.6227906,
+                 122.3899553, 122.1487927, 120.2108331, 119.2359793, 118.1344823, 117.2742004, 117.0278259, 115.9159121,
+                 115.1716655, 113.9258777, 113.5508127, 112.1702343, 111.8552818, 111.7291767, 111.4767525, 111.2872467,
+                 109.76534, 107.84798, 107.591046, 106.8828893, 106.7538816, 106.5602237, 106.4310206, 104.9394965,
+                 104.3529674, 103.9610308, 103.9610308, 103.568354, 100.0666556, 98.79637089, 98.39353076, 97.98986429,
+                 97.72029086, 93.4240091, 93.4240091, 92.17833242, 92.17833242, 92.03940498, 91.761235, 91.761235,
+                 90.78429771, 90.3639991, 88.95587595, 86.89404461, 86.75095022, 86.46440671, 84.80745344,
+                 84.22732266, 83.86372461, 83.86372461, 81.22207008, 80.77762508, 78.5367321, 78.5367321, 78.16014653,
+                 77.70704264, 77.02489778, 75.88122027, 75.88122027, 75.34454806, 75.11396009, 73.72291067, 68.18239671,
+                 68.02082695, 67.45381386, 67.2913723, 66.8844075, 66.7212747, 66.0667369, 64.83064394, 64.6649425,
+                 64.24975649, 63.41532931, 63.41532931, 61.30475459, 61.21957951, 61.04905129, 60.62168438, 59.50340117,
+                 58.80997949, 58.46173259, 58.11244536, 58.11244536, 57.76210524, 57.76210524, 57.76210524, 57.58653637,
+                 57.58653637, 57.58653637, 56.61607172, 55.27913194, 55.27913194, 54.10724002, 54.01657013, 53.83500162,
+                 51.35292818, 50.9801281, 50.9801281, 50.69963133, 50.51220174, 50.23040332, 50.23040332, 49.66441942,
+                 48.42689237, 47.56080855, 47.36727491, 46.39359801, 46.39359801, 44.71440529, 43.30751256, 42.90134223,
+                 42.49323999, 42.28845279, 42.1858731, 41.36068833, 41.2569624, 40.00187491, 39.6850263, 39.15411297,
+                 38.08131249, 37.32128296, 37.32128296, 37.21207647, 37.21207647, 36.55343397, 36.22188069, 36.11102555,
+                 36, 35.10553182, 34.54066479, 33.28134117, 33.28134117, 33.04981762, 33.04981762, 32.58431755,
+                 31.64317125, 30.80804029, 30.44665044, 29.83951337, 29.71734524, 29.47225199, 29.22613535, 28.85500355,
+                 28.48146944, 28.23108087, 26.83345121, 26.83345121, 25, 24.73261712, 22.39772511, 21.68773756,
+                 21.11127629, 19.78434977, 19.63418303, 19.48343981, 19.1801879, 18.72075441, 17.62602898, 17.46687612,
+                 17.14637163, 16.98499252, 16.65990837, 16.49617297, 16.49617297, 16.16623563, 16.16623563,
+                 15.83289626, 15.32618865, 15.15542109, 13.93163954, 13.93163954, 13.93163954, 13.93163954, 13.75245135,
+                 13.39051828, 13.39051828, 13.02362568, 12.83823205, 12.46335937, 12.27379797, 12.08276124, 11.89020214,
+                 11.89020214, 11.69607095, 11.50031505, 11.30287864, 11.30287864, 10.90272356, 10.69987481, 10.69987481,
+                 10.69987481, 10.28827648, 10.0793684, 10.0793684, 9.868272403, 9.868272403, 9.439130677, 9.439130677,
+                 9.220872584, 9, 8.776382955, 8.776382955, 8.776382955, 8.549879733, 8.087579399, 8.087579399,
+                 8.087579399, 7.851424411, 7.851424411, 7.368062997, 7.368062997, 7.368062997, 7.120367359, 7.120367359,
+                 6.868285455, 6.611489018, 6.611489018, 6.349604208, 6.349604208, 5.808785734, 5.808785734, 5.808785734,
+                 5.808785734, 5.241482788, 4.946087443, 4.946087443, 4.946087443, 4.946087443, 4.326748711, 4.326748711,
+                 3.65930571, 3.301927249, 2.5198421, 2.080083823, 2.080083823, 2.080083823, 2.080083823, 1, 1]
+
+blankLabel0 = Label(root, text="                              ").grid(row=8)
+blankLabel1 = Label(root, text="                                                                                                                       ").grid(row=8, column=2)
+blankLabel2 = Label(root, text="                                                          ").grid(row=8, column=4)
+blankLabel3 = Label(root, text="                                    ").grid(row=4)
+blankLabel4 = Label(root, text="                            ").grid(row=8, column=8)
+blankLabel5 = Label(root, text="                            ").grid(row=8, column=9)
+blankLabel6 = Label(root, text="").grid(row=7)
+blankLabel7 = Label(root, text="").grid(row=0)
+blankLabel8 = Label(root, text="").grid(column=0)
+blankLabel9 = Label(root, text="      ").grid(column=11)
+
+bg = PhotoImage(file=f"Background/The_Menagerie.png")
+labelBG = Label(root, image = bg)
+labelBG.place(x=0, y=0)
+
+global counter
+totalCount = 0
+text_box = ScrolledText(root, height=40, width=45)
+text_box.grid(row=2, column=10)
+howManyLabel = Label(root, text="How many cards?", font=30).grid(row=3, column=3)
+entry1 = Entry(root)
+entry1.grid(row=4, column=3)
+
+path = '.\Cards' #this section of code opens a random card to display when the program is open
+files = os.listdir(path)
+randomImage = random.choice(files)
+file = path+'\\'+randomImage
+cardImage = Image.open(file)
+test = ImageTk.PhotoImage(cardImage)
+label1 = tkinter.Label(image=test)
+label1.image = test
+label1.grid(row=2, column=1)
+
+def get():
+    numCards = entry1.get()
+    numCards = int(numCards)
+    if radio.get() == 1:
+        runSim(numCards)
+    if radio.get() == 2:
+        cumSim(numCards)
+
+def checkRadio():
+    if radio.get() == 1:
+        card_button1.configure(command=lambda: runSim(10))
+        card_button2.configure(command=lambda: runSim(50))
+        card_button3.configure(command=lambda: runSim(100))
+        card_button4.configure(command=lambda: runSim(1000))
+        card_button5.configure(command=lambda: runSim(10000))
+        card_button6.configure(command=lambda: runSim(100000))
+    if radio.get() == 2:
+        card_button1.configure(command=lambda: cumSim(10))
+        card_button2.configure(command=lambda: cumSim(50))
+        card_button3.configure(command=lambda: cumSim(100))
+        card_button4.configure(command=lambda: cumSim(1000))
+        card_button5.configure(command=lambda: cumSim(10000))
+        card_button6.configure(command=lambda: cumSim(100000))
+
+def createCardsOpen():
+    global labelCardsOpened
+    global cardsOpened
+    if cardsOpened == 0:
+        labelCardsOpened = Label(root, text=cardsOpened, font=30)
+        labelCardsOpened.grid(row=3 , column=10)
+        labelCardsOpened["text"]=f"Cumulative cards opened: "
+    return labelCardsOpened
+
+def updateCardsOpen(numCards):
+    global cardsOpened
+    cardsOpened += numCards
+    global labelCardsOpened
+    labelCardsOpened["text"]=f"Cumulative cards opened: {cardsOpened}"
+    return cardsOpened #trying to pass the label variable to use in another function
+
+def clearTextBox():
+    text_box.configure(state="normal")
+    text_box.delete('1.0', END) #clears the text box
+    global cardsOpened
+    cardsOpened = 0
+    global labelCardsOpened
+    labelCardsOpened.destroy()
+    global counter
+    counter = {card: 0 for card in cards}
+
+def runSim(numCards):
+    text_box.configure(state="normal")
+    createCardsOpen()
+    clearTextBox() #clears the text box
+    counter = {card: 0 for card in cards} #resets counter when runSim button is clicked
+    totalCount = 0 #resets the total count of cards
+    for i in range(numCards):
+        x = random.choices(cards, weights=probabilities, k=1)
+        counter[x[0]] += 1
+
+    for card, count in counter.items():
+        if count > 0:
+            text_box.insert('1.0', f"{count} - {card}" + '\n')
+            totalCount += count
+
+        if totalCount == numCards and count > 0:
+            cardImage = Image.open(f"Cards/{card}.png")
+            test = ImageTk.PhotoImage(cardImage)
+            label1 = tkinter.Label(image=test)
+            label1.image = test
+            label1.grid(row=2, column=1)
+            text_box.delete("end-1l") #deletes the last + '\n' after the last card text is printed
+            text_box.configure(state="disabled")
+
+def cumSim(numCards): #runs the cumulative simulation keeping track of cards drawn in prior button presses
+    text_box.configure(state="normal")
+    text_box.delete('1.0', END) #clears the text box so that only one version of the card list shows
+    totalCount = 0 #resets the total count of cards
+    drawnCardsList = []
+    createCardsOpen()
+    updateCardsOpen(numCards)
+    for i in range(numCards):
+        x = random.choices(cards, weights=probabilities, k=1)
+        drawnCardsList.append(x)
+        counter[x[0]] += 1
+
+    for card, count in counter.items():
+        if count > 0: #only prints the card in the text box if it has been found
+            text_box.insert('1.0', f"{count} - {card}" + '\n')
+            totalCount += 1
+
+    lastCardName = str(drawnCardsList[numCards - 1])[2:-2]
+    cardImage = Image.open(f"Cards/{lastCardName}.png")
+    test = ImageTk.PhotoImage(cardImage)
+    label1 = tkinter.Label(image=test)
+    label1.image = test
+    label1.grid(row=2, column=1)
+
+cardsOpened = 0
+
+radio = IntVar()
+r1 = Radiobutton(root, text="Non-Cumulative", variable=radio, value=1, command=checkRadio).grid(row=6, column=10)
+r2 = Radiobutton(root, text="Cumulative", variable=radio, value=2, command=checkRadio).grid(row=7, column=10)
+radio.set(1) #sets Non-Cumulative option as default option
+
+my_img = ImageTk.PhotoImage(Image.open("buttonIcons/Stacked_Deck_icon.png"))
+my_button = Button(root, image=my_img, command=get)
+my_button.grid(row=2, column=3)
+
+my_img1 = ImageTk.PhotoImage(Image.open("buttonIcons/Stacked_Deck_10.png"))
+card_button1 = Button(root, image=my_img1, command= lambda : runSim(10))
+card_button1.grid(row=6, column=2)
+
+my_img2 = ImageTk.PhotoImage(Image.open("buttonIcons/Stacked_Deck_50.png"))
+card_button2 = Button(root, image=my_img2, command=lambda : runSim(50))
+card_button2.grid(row=6, column=3)
+
+my_img3 = ImageTk.PhotoImage(Image.open("buttonIcons/Stacked_Deck_100.png"))
+card_button3 = Button(root, image=my_img3, command=lambda : runSim(100))
+card_button3.grid(row=6, column=5)
+
+my_img4 = ImageTk.PhotoImage(Image.open("buttonIcons/Stacked_Deck_1000.png"))
+card_button4 = Button(root, image=my_img4, command=lambda : runSim(1000))
+card_button4.grid(row=8, column=2)
+
+my_img5 = ImageTk.PhotoImage(Image.open("buttonIcons/Stacked_Deck_10000.png"))
+card_button5 = Button(root, image=my_img5, command=lambda : runSim(10000))
+card_button5.grid(row=8, column=3)
+
+my_img6 = ImageTk.PhotoImage(Image.open("buttonIcons/Stacked_Deck_100000.png"))
+card_button6 = Button(root, image=my_img6, command=lambda : runSim(100000))
+card_button6.grid(row=8, column=5)
+
+button_quit = Button(root, text="Exit Program", command=root.quit, width=25)
+button_quit.grid(row=9, column=10)
+
+button_clear = Button(root, text="Clear", command=clearTextBox, width=25)
+button_clear.grid(row=5, column=10)
+
+#Event loop
+root.mainloop()
