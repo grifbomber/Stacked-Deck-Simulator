@@ -17,13 +17,17 @@ There are two modes, non-cumulative and cumulative. Non-cumulative mode will onl
 
 FAQ:
 Q: How do we know the drop rates?
+
 A: We don't exactly, but we were able to estimate due to a handful of exiles opening 513,764 stacked decks and submitting their results in 3.18.
 
 Q: Do we have precise drop rates for all divination cards?
+
 A: Unfortunately not. The rarer the card is, the more stacked deck openings that would be required to get a more precise drop rate. This reddit comment can explain statistical caveats much better than I can: https://www.reddit.com/r/pathofexile/comments/wsi0j8/comment/iky95yp/
 
 Q: Why is the simulator as of 3.** when we are currently in patch 3.**?
+
 A: This is due to two things: 1) We don't know if any stacked deck weightings were changed between patch and even if we had a hunch some were changed we don't know what they changed to. 2) New cards are added each patch which we can only guess what the weightings could be.
 
 Q: How can I help?
+
 A: Open stacked decks! Join the Prohibited Library Discord (https://discord.gg/3VxKY6gt7j) and share your results in the stacked-decks channel. Exilence Next is a fantastic tool to track mass stacked deck openings. If you have any questions about that, pop in and ask!
